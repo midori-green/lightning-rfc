@@ -1,4 +1,4 @@
-# ライトニング・ネットワーク仕様書（作成中）
+# ライトニングネットワーク仕様書（作成中）
 
 これは、[Lightning Network](https://lightning.network/)（[日本語訳](https://lightning.green/)） のRFCである[lightning-rfc](https://github.com/midori-green/lightning-rfc)の翻訳サイトです。
 
