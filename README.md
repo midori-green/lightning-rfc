@@ -5,7 +5,7 @@
 ## クレジット
 
 翻訳者: [Jiyu](https://twitter.com/jiyu33)<br>
-連絡先: [m@jiyu.green](m@jiyu.green)<br>
+連絡先: [m@jiyu.green](mailto:m@jiyu.green)<br>
 協力会社: [みどり合同会社](https://manga.green/)<br>
 
 ![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png "License CC-BY")<br>
