@@ -141,91 +141,82 @@
    * _種類: 終点ノード、ホップ、起点ノード、処理ノード、受取ノード、送付ノード_
 
 * *起点ノード*:
-   * The _node_ that originates a packet that will route a payment through some number of _hops_ to a _final node_. It is also the first _sending peer_ in a chain.
-   * _See category: node_
-   * _See related: final node, processing node_
+   * _終点ノードに_向けた、いくつかの_ホップ_を経由した決済のパケットの始まりである_ノード_。チェーンにおける最初の_送付ピア_でもある。
+   * _カテゴリ: ノード_
+   * _関連: 終点ノード、処理ノード_
 
 * *ペイメントハッシュ*:
-   * The *HTLC* contains the payment hash, which is the hash of the
-    *payment preimage*.
-   * _See container: HTLC_
-   * _See originator: payment preimage_
+   * *ペイメントプレイメージ*  のハッシュ。*HTLC*はペイメントハッシュを含んでいる。
+   * _詳細: HTLC_
+   * _原典: ペイメントプレイメージ_
 
 * *ペイメントプレイメージ*:
-   * Proof that payment has been received, held by
-    the final recipient, who is the only person who knows this
-    secret. The final recipient releases the preimage in order to
-    release funds. The payment preimage is hashed as the *payment hash*
-    in the *HTLC*.
-   * _See container: HTLC_
-   * _See derivation: payment hash_
+   * シークレットを知る唯一の者である最後の受取人が有する支払を受け取ったことの証明。
+    最後の受取人はファンドを解放する為にプレイメージを解放する。ペイメントプレイメージは*HTLC*の*ペイメントハッシュ*としてハッシュ化されている。
+   * _詳細: HTLC_
+   * _派生: ペイメントハッシュ_
 
 * *ピア*:
-   * Two *nodes* that are in communication with each other.
-      * Two peers may gossip with each other prior to setting up a channel.
-      * Two peers may establish a *channel* through which they transact.
-   * _See related: node_
+   * 通信しあっている2つの*ノード*。
+      * 2つのピアはチャネルを開く前にゴシップを送り合うかもしれない。
+      * 2つのピアはトランザクションを送るためのチャネルを立ち上げるかもしれない。
+   * _関連: ノード_
 
 * *ペナルティトランザクション*:
-   * A transaction that spends all outputs of a *revoked commitment
-    transaction*, using the *commitment revocation private key*. A *peer* uses this
-    if the other peer tries to "cheat" by broadcasting a *revoked
-    commitment transaction*.
-   * _See related: closing transaction, commitment transaction, funding transaction_
+   * コミットメント取消秘密鍵を用いて、全ての取消コミットメントトランザクションのアウトプットを消費するトランザクションのこと。
+    ピアは相手が*コミットメント取消秘密鍵*をブロードキャストすることによって「だまそうと」した場合にこれを使う。
+   * _関連: クロージングトランザクション、コミットメントトランザクション、ファンディングトランザクション_
 
 * *パーコミットメントシークレット*:
    * すべての*コミットメントトランザクション*デバイスはパーコミットメントシークレットからその鍵を引き出す。
      この鍵は、圧縮された以前の全てのコミットメントに対する一連のパーコミットメントシークレットにする為に生成されたものである。
    * _詳細: コミットメントトランザクション_
-   * _由来: コミットメント取消秘密鍵_
+   * _原典: コミットメント取消秘密鍵_
 
 * *処理ノード*:
-   * A *node* that is processing a packet that originated with an *origin node* and that is being sent toward a *final node* in order to route a payment. It acts as a _receiving peer_ to receive the message, then a _sending peer_ to send on the packet.
-   * _See category: node_
-   * _See related: final node, origin node_
+   * 支払経路を構築する為に、起点ノードから開始され、終点ノードに送られるパケットを処理するノード。
+     _送付ピア_がパケットを送付し、_受取ピア_がメッセージを受信する為に処理ノードが用いられる。
+   * _カテゴリ: ノード_
+   * _関連: 終点ノード、起点ノード_
 
 * *受取ノード*:
-   * A *node* that is receiving a message.
-   * _See category: node_
-   * _See related: sending node_
+   * メッセージ受け取る*ノード*。
+   * _カテゴリ: ノード_
+   * _関連: 送付ノード_
 
 * *受取ピア*:
-   * A *node* that is receiving a message from a directly connected *peer*.
-   * _See category: peer_
-   * _See related: sending peer_
+   * 接続された*ピア*から直接メッセージを受け取る*ノード*。
+   * _カテゴリ: ピア_
+   * _関連: 送付ピア_
 
 * *取消コミットメントトランザクション*:
-   * An old *commitment transaction* that has been revoked because a new commitment transaction has been negotiated.
-   * _See category: commitment transaction_
+   * 新しいコミットメントトランザクションが作成されたために取り消された古い*コミットメントトランザクション*。
+   * _カテゴリ: コミットメントトランザクション_
 
 * *取消トランザクションクローズ*:
-   * An invalid close of a *channel*, accomplished by broadcasting a *revoked
-    commitment transaction*. Since the other *peer* knows the
-    *commitment revocation secret key*, it can create a *penalty transaction*.
-   * _See related: mutual close, unilateral close_
+   * *取消コミットメントトランザクション*をブロードキャストすることにより*チャネル*を無効化してクローズすること。
+    *ピア*は*コミットメント取消秘密鍵*を知っているので、*ペナルティトランザクション*を生成可能。
+   * _See 関連: 相互クローズ、一方的クローズ_
 
-* *ルート*: A path across the Lightning Network that enables a payment
-    from an *origin node* to a *final node* across one or more
-    *hops*.
-  * _See related: channel_
+* *ルート*: 支払を可能にするライトニングネットワーク上の経路。
+    *起点ノード*から１以上の*ホップ*を通って*終点ノードに*たどり着く。
+  * _関連: チャネル_
 
 * *送付ノード*:
-   * A *node* that is sending a message.
-   * _See category: node_
-   * _See related: receiving node_
+   * メッセージを送付するノード。
+   * _カテゴリ: ノード_
+   * _関連: 受取ノード_
 
 * *送付ピア*:
-   * A *node* that is sending a message to a directly connected *peer*.
-   * _See category: peer_
-   * _See related: receiving peer_.
+   * 接続した*ピア*に直接メッセージを送付する*ノード*。
+   * _カテゴリ: ピア_
+   * _関連: 受取ピア_.
 
 * *一方的クローズ*:
-   * An uncooperative close of a *channel*, accomplished by broadcasting a
-    *commitment transaction*. This transaction is larger (i.e. less
-    efficient) than a *mutual close transaction*, and the *peer* whose
-    commitment is broadcast cannot access its own outputs for some
-    previously-negotiated duration.
-   * _See related: mutual close, revoked transaction close_
+   * *コミットメントトランザクション*をブロードキャストすることによる非協力的なチャネルのクローズ。
+    *相互クローズトランザクション*より大きな（すなわちより非効率な）トランザクションであり、
+       コミットメントをブロードキャストした*ピア*は従前に作成した自己のアウトプットの一部にアクセスできない。
+   * _関連: 相互クローズ、取消トランザクションクローズ_
 
 ## テーマソング
 
@@ -283,6 +274,3 @@
 ![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png "License CC-BY")
 <br>
 このコンテンツは、[Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/)でライセンスされています。
-
-
-
