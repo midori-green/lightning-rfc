@@ -1,26 +1,26 @@
-# BOLT #1: Base Protocol
+# BOLT #1: プロトコルの基礎
 
-## Overview
+## 概要
 
-This protocol assumes an underlying authenticated and ordered transport mechanism that takes care of framing individual messages.
-[BOLT #8](08-transport.md) specifies the canonical transport layer used in Lightning, though it can be replaced by any transport that fulfills the above guarantees.
+このプロトコルは個別のメッセージの枠組みを処理する基本的な証明と規則正しい移送機構を前提とする。
+[ボルト #8](08-transport.md) でライトニングで使われる正当な移送レイヤーについて詳しく述べられているが、これは上記の前提を満たす移動に置き換えることができる。
 
-The default TCP port is 9735. This corresponds to hexadecimal `0x2607`: the Unicode code point for LIGHTNING.<sup>[1](#reference-1)</sup>
+デフォルトのTCPポートは9735である。これは16進数の`0x2607`であり、ライトニングのユニコードのコードポイントでもある。<sup>[1](#reference-1)</sup>
 
-All data fields are unsigned big-endian unless otherwise specified.
+すべてのデータフィールドは、特記されてない限り符号なしビッグエンディアンとする。
 
-## Table of Contents
+## コンテンツ一覧
 
-  * [Connection Handling and Multiplexing](#connection-handling-and-multiplexing)
-  * [Lightning Message Format](#lightning-message-format)
-  * [Setup Messages](#setup-messages)
-    * [The `init` Message](#the-init-message)
-    * [The `error` Message](#the-error-message)
-  * [Control Messages](#control-messages)
-    * [The `ping` and `pong` Messages](#the-ping-and-pong-messages)
-  * [Acknowledgments](#acknowledgments)
-  * [References](#references)
-  * [Authors](#authors)
+  * [コネクションの処理と多重化](#connection-handling-and-multiplexing)
+  * [ライトニングメッセージフォーマット](#lightning-message-format)
+  * [セットアップメッセージ](#setup-messages)
+    * [`init`メッセージ](#the-init-message)
+    * [`error`メッセージ](#the-error-message)
+  * [コントロールメッセージ](#control-messages)
+    * [`ping` と `pong` メッセージ](#the-ping-and-pong-messages)
+  * [謝辞](#acknowledgments)
+  * [参考文献](#references)
+  * [著者](#authors)
 
 ## Connection Handling and Multiplexing
 
@@ -286,3 +286,4 @@ rotations as specified within [BOLT #8](08-transport.md).
 ![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png "License CC-BY")
 <br>
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+
