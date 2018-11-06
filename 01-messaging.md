@@ -22,11 +22,16 @@
   * [参考文献](#references)
   * [著者](#authors)
 
-## Connection Handling and Multiplexing
+## コネクションの処理と多重化
 
-Implementations MUST use a single connection per peer; channel messages (which include a channel ID) are multiplexed over this single connection.
+実装の際には、ピアごとに一つのコネクションを使わなければならない。つまり、チャネルメッセージ（チャネルIDを含む）は一つのコネクションに多重化されてなければならない。
 
-## Lightning Message Format
+## ライトニングメッセージフォーマット
+
+復号化されたライトニングメッセージは以下の形である。
+
+1. `type`: メッセージの型を示す２バイトのビッグエンディアンフィールド
+2. `payload`: 変動する長さのペイロード  メッセージのリマインダーから成り、`type`フォーマットに適合したものに従う
 
 After decryption, all Lightning messages are of the form:
 
@@ -286,4 +291,5 @@ rotations as specified within [BOLT #8](08-transport.md).
 ![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png "License CC-BY")
 <br>
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+
 

@@ -1,86 +1,66 @@
-# BOLT #11: Invoice Protocol for Lightning Payments
+# ボルト #11: ライトニング決済の為のインボイスプロトコル
 
-A simple, extendable QR-code-ready protocol for requesting payments
-over Lightning.
+ライトニング決済のための簡単で、拡張可能なQRコードプロトコル。
 
-# Table of Contents
+# コンテンツ一覧
 
-  * [Encoding Overview](#encoding-overview)
-  * [Human-Readable Part](#human-readable-part)
-  * [Data Part](#data-part)
-    * [Tagged Fields](#tagged-fields)
-  * [Payer / Payee Interactions](#payer--payee-interactions)
-    * [Payer / Payee Requirements](#payer--payee-requirements)
-  * [Implementation](#implementation)
-  * [Examples](#examples)
-  * [Authors](#authors)
+  * [エンコーディング概要](#encoding-overview)
+  * [ヒューマンリーダブルパート](#human-readable-part)
+  * [データパート](#data-part)
+    * [タグフィールド](#tagged-fields)
+  * [支払人／受取人 の相互作用](#payer--payee-interactions)
+    * [支払人／受取人 の受取人側の必要条件](#payer--payee-requirements)
+  * [実装](#implementation)
+  * [例](#examples)
+  * [著者](#authors)
 
-# Encoding Overview
+# エンコーディング概要
 
-The format for a Lightning invoice uses
-[bech32 encoding](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki),
-which is already used for Bitcoin Segregated Witness. It can be
-simply reused for Lightning invoices even though its 6-character checksum is optimized
-for manual entry, which is unlikely to happen often given the length
-of Lightning invoices.
+ライトニングインボイスのフォーマットはビットコインのSegwit と同じく [base32エンコーディング](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki)を使う。手入力のために6文字のチェックサムに最適化はされていることがあるが、その場合でもライトニングインボイスに再利用することができる。しかし、ライトニングインボイスの長さを考慮すると、再利用する事例はあまり起こらない。
 
-If a URI scheme is desired, the current recommendation is to either
-use 'lightning:' as a prefix before the BOLT-11 encoding (note: not
-'lightning://'), or for fallback to bitcoin payments to use 'bitcoin:',
-as per BIP-21, with the key 'lightning' and the value equal to the BOLT-11
-encoding.
+‘Lightning:’（注：’lightning://’ ではない）BOLT-11のエンコーディングの前につけるか、BIP-21にある’bitcoin:’ をライトニングの鍵とともに使い、値はBOLT-11エンコーディングとするのが望ましい。
 
-## Requirements
+## 必要条件
 
-A writer MUST encode the payment request in Bech32 as specified in
-BIP-0173, with the exception that the Bech32 string MAY be longer than
-the 90 characters specified there. A reader MUST parse the address as
-Bech32 as specified in BIP-0173 (also without the character limit),
-and MUST fail if the checksum is incorrect.
+書き手は Bech32（BIP-0173 参照）文字列が90文字を超えるときを除き、Bech32 を使って支払要求をエンコードする必要がある。 読み手はアドレスを（前述の文字数制限を同様の例外として） Bech32 でパースしなければならず、チェックサムが不正なときは読み取り失敗としなければならない。
 
-# Human-Readable Part
+# ヒューマンリーダブルパート
 
-The human-readable part of a Lightning invoice consists of two sections:
-1. `prefix`: `ln` + BIP-0173 currency prefix (e.g. `lnbc` for bitcoin mainnet, `lntb` for bitcoin testnet and `lnbcrt` for bitcoin regtest)
-1. `amount`: optional number in that currency, followed by an optional
-   `multiplier` letter. The unit encoded here is the 'social' convention of a payment unit -- in the case of Bitcoin the unit is 'bitcoin' NOT satoshis.
+ライトニングインボイスのヒューマンリーダブルパートは以下の２つから成る:
 
-The following `multiplier` letters are defined:
+1. `prefix`: `ln` + BIP-0173 の現状の接頭辞（すなわち、ビットコインメインネットにおける `lnbc`、ビットコインテストネットにおける`lntb`、ビットコイン regtest における`lnbcrt`）
+1. `amount`: 任意の`multiplier`文字に続く、任意に設定できる通貨の数量。ここでエンコードされたこの単位は、決済単位の「社交」会である−ビットコインの場合、単位は ’bitcoin’ であり、satoshi ではない。
 
-* `m` (milli): multiply by 0.001
-* `u` (micro): multiply by 0.000001
-* `n` (nano): multiply by 0.000000001
-* `p` (pico): multiply by 0.000000000001
+以下に定義された`multiplier`文字をあげる。
 
-## Requirements
+* `m` (ミリ): 0.001 倍
+* `u` (ミクロ): 0.000001 倍
+* `n` (ナノ): 0.000000001 倍
+* `p` (ピコ): 0.000000000001 倍
 
-A writer:
-  - MUST encode `prefix` using the currency it requires for successful payment
-  - If it requires a specific minimum amount for successful payment:
-	- MUST include that `amount`
-	- MUST encode `amount` as a positive decimal integer with no leading zeroes
-	- SHOULD use the shortest representation possible by using the largest
-	  multiplier or omitting the multiplier
+## 必要条件
 
-A reader:
-  - MUST fail if it does not understand the `prefix`
-  - If the `amount` is empty:
-	- SHOULD indicate if amount is unspecified
-  - Otherwise:
-	- MUST fail if `amount` contains a non-digit or is followed by
-      anything except a `multiplier` in the table above
-    - If the `multiplier` is present:
-	  - MUST multiply `amount` by the `multiplier` value to derive the
-        amount required for payment
+書き手:
+  - 成功した決済は、使用する通貨の`prefix`がエンコードされてなければならない、
+  - 成功した決済が特定の最小額を必要とするならば
+    - `amount`を含まなければならない
+    - `amount`を先頭のゼロがない10進法の整数としてエンコードしなくてはならない
+    - 最大の`multiplier`か、multiplierを省略することにより、可能な限り短く表現すべきである
 
-## Rationale
+読み手:
+  - `prefix`が認識できなければ失敗としなければならない
+  - `amount`が空なら If the `amount` is empty:
+    - 額が指定されていないかどうかを知らせるべきである
+  - さもなくば:
+    - もし`amount`が非アラビア数字か、上記にある`multiplier `以外の文字列が`amount`以降に続いていた場合、失敗としなければならない。
+    - `multiplier`が含まれている場合:
+      - `amount`に`multiplier`をかけて、支払額を得る。
 
-The `amount` is encoded into the human readable part, as it's fairly
-readable and a useful indicator of how much is being requested.
+## 原理
 
-Donation addresses often don't have an associated amount, so `amount`
-is optional in that case. Usually a minimum payment is required for
-whatever is being offered in return.
+`amount`はヒューマンリーダブルパートにおいて、いくら要求されたかをそれなりに読みやすくて便利な指標でエンコードされている。
+
+寄付アドレスは関連した額がないため、`amount`は任意となる。通常は何が対価として提供されようが、最小の支払は要求される。
 
 # Data Part
 
@@ -417,7 +397,7 @@ Breakdown:
   * `qjmp7lwpagxun9pygexvgpjdc4jdj85f`: 160 bit P2PKH address
 * `r`: tagged field: route information
   * `9y`: `data_length` (`9` = 5, `y` = 4; 5 * 32 + 4 = 164)
-    * `q20q82gphp2nflc7jtzrcazrra7wwgzxqc8u7754cdlpfrmccae92qgzqvzq2ps8pqqqqqqpqqqqq9qqqvpeuqafqxu92d8lr6fvg0r5gv0heeeqgcrqlnm6jhphu9y00rrhy4grqszsvpcgpy9qqqqqqgqqqqq7qqzq`: 
+    * `q20q82gphp2nflc7jtzrcazrra7wwgzxqc8u7754cdlpfrmccae92qgzqvzq2ps8pqqqqqqpqqqqq9qqqvpeuqafqxu92d8lr6fvg0r5gv0heeeqgcrqlnm6jhphu9y00rrhy4grqszsvpcgpy9qqqqqqgqqqqq7qqzq`:
       * pubkey: `029e03a901b85534ff1e92c43c74431f7ce72046060fcf7a95c37e148f78c77255`
       * `short_channel_id`: 0102030405060708
       * `fee_base_msat`: 1 millisatoshi
@@ -508,3 +488,4 @@ Breakdown:
 ![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png "License CC-BY")
 <br>
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+
